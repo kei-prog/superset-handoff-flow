@@ -12,8 +12,9 @@ flowchart TD
     B --> C["子 Codex agent: 実装・検証"]
     C --> D["codex-review<br/>(closeout review が clean になるまで)"]
     D --> E["local commit / clean worktree"]
-    E --> F["kei-superset-worktree-merge<br/>候補 worktree を番号提示 → 選択分を merge"]
-    F --> G["kei-worktree-local-main-merge<br/>local main へ安全に合流・検証"]
+    E --> F{merge 対象}
+    F -->|Superset worktree が複数| G["kei-superset-worktree-merge<br/>候補を番号提示 → 選択分を順次 merge<br/>(個別 merge の安全規約は 5 を継承)"]
+    F -->|単一 worktree| H["kei-worktree-local-main-merge<br/>local main へ安全に合流・検証"]
 ```
 
 ## Skills
@@ -23,8 +24,8 @@ flowchart TD
 | 1 | `kei-superset-implementation-handoff` | 親スレッドの調査 → implementation brief 作成 → Superset launch まで |
 | 2 | `kei-handoff` | 自己完結した repo-scoped handoff prompt を書くための規律（1 の下敷き） |
 | 3 | `codex-review` | 子 agent の closeout review。accepted finding がゼロになるまで回す（helper script 同梱） |
-| 4 | `kei-superset-worktree-merge` | Superset が作った worktree 群を番号付きで提示し、選択分を順番に merge |
-| 5 | `kei-worktree-local-main-merge` | worktree の完了 commit を親 repo の local `main` に安全に合流 |
+| 4 | `kei-superset-worktree-merge` | Superset が作った worktree 群を番号付きで提示し、選択分を順番に merge（安全確認は 5 の規約を継承） |
+| 5 | `kei-worktree-local-main-merge` | 単一 worktree の完了 commit を親 repo の local `main` に安全に合流する本体手順 |
 
 ## Setup
 
