@@ -36,12 +36,12 @@ flowchart TD
 ```bash
 git clone https://github.com/kei-prog/superset-handoff-flow.git
 cd superset-handoff-flow
-for s in skills/*/; do
-  ln -s "$(pwd)/$s" ~/.codex/skills/"$(basename "$s")"
-done
+./install.sh
 ```
 
-導入確認: Codex セッションで `$kei-superset-implementation-handoff` を呼び出し、skill が読み込まれることを確認してください。
+`install.sh` は冪等で、前提 command の確認 → `~/.codex/skills/` への個別 symlink → 導入検証まで行います。既存 skill は上書きしません。
+
+AI agent にセットアップさせる場合は [SETUP.md](SETUP.md) をそのまま渡してください。導入確認は Codex セッションで `$kei-superset-implementation-handoff` を呼び出せることです。
 
 ## Placeholders
 

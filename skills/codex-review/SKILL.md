@@ -100,11 +100,6 @@ Bundled helper:
 ~/.codex/skills/codex-review/scripts/codex-review --help
 ```
 
-If installed from `agent-scripts`, path is:
-
-```bash
-/Users/steipete/Projects/agent-scripts/skills/codex-review/scripts/codex-review --help
-```
 
 The helper:
 - chooses dirty `--uncommitted` first
