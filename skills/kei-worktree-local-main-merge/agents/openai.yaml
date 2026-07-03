@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kei Worktree Local Main Merge"
+  short_description: "Merge a worktree commit into local main."
+  default_prompt: "Use Kei's workflow to merge the completed worktree commit into the parent local main, verify the result, and do not push."

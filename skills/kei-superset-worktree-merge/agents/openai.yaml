@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kei Superset Worktree Merge"
+  short_description: "Superset worktree候補を選んでlocal mainへ合流"
+  default_prompt: "Use $kei-superset-worktree-merge to list Superset worktrees, let me choose by number, and merge the selected ones into local main in order."
