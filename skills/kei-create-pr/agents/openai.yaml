@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kei Create PR"
+  short_description: "Kei's open PR creation flow."
+  default_prompt: "Use $kei-create-pr to create a PR using Kei's preferred workflow."

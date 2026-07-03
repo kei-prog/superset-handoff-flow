@@ -15,7 +15,7 @@ flowchart TD
     E --> F{成果の出し先}
     F -->|Superset worktree が複数 → local main| G["kei-superset-worktree-merge<br/>候補を番号提示 → 選択分を順次 merge<br/>(個別 merge の安全規約は 5 を継承)"]
     F -->|単一 worktree → local main| H["kei-worktree-local-main-merge<br/>local main へ安全に合流・検証"]
-    F -->|PR として出す| I["branch を push して PR 作成<br/>(例: gh pr create — 本セットの対象外)"]
+    F -->|PR として出す| I["kei-create-pr<br/>verify → commit → push → PR open"]
 ```
 
 ## Skills
@@ -27,6 +27,7 @@ flowchart TD
 | 3 | `codex-review` | 子 agent の closeout review。accepted finding がゼロになるまで回す（helper script 同梱） |
 | 4 | `kei-superset-worktree-merge` | Superset が作った worktree 群を番号付きで提示し、選択分を順番に merge（安全確認は 5 の規約を継承） |
 | 5 | `kei-worktree-local-main-merge` | 単一 worktree の完了 commit を親 repo の local `main` に安全に合流する本体手順 |
+| 6 | `kei-create-pr` | PR として出す場合の workflow。verify → commit → push → PR open まで |
 
 ## Setup
 
