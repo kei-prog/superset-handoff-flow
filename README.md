@@ -31,7 +31,7 @@ flowchart TD
 
 ## Setup
 
-前提: [Codex CLI](https://github.com/openai/codex) と Superset CLI がセットアップ済みであること。
+前提: [Codex CLI](https://github.com/openai/codex) と [Superset CLI](https://superset.sh) 。未導入の場合は各公式手順でインストール・認証してください（[SETUP.md](SETUP.md) 参照）。
 
 ```bash
 git clone https://github.com/kei-prog/superset-handoff-flow.git

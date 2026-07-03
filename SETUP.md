@@ -2,6 +2,18 @@
 
 この repo を渡された Codex / AI agent は、以下をそのまま実行すればセットアップが完了する。
 
+## 0. Prerequisites
+
+`install.sh` が MISSING を報告した command は、公式手順に従って agent がインストール・認証まで行う。この repo 独自のインストール手順は持たない。常に公式を正とする。
+
+| command | 公式 | 補足 |
+|---|---|---|
+| `codex` | https://github.com/openai/codex | インストール後、公式手順に従い認証する |
+| `superset` | https://superset.sh | インストール後、認証し `superset status` が通ることを確認する |
+| `gh` | https://cli.github.com | `kei-create-pr` を使う場合のみ。`gh auth status` で認証確認 |
+
+インストール・認証が済んだら `./install.sh` を再実行して MISSING が消えたことを確認する。
+
 ## 1. Install
 
 ```bash
@@ -23,7 +35,7 @@ exit code `0` で全 skill 導入済み。非 0 の場合は SKIPPED / FAILED / 
 新しい Codex セッションで次を確認する:
 
 1. `$kei-superset-implementation-handoff` を呼び、skill が読み込まれる
-2. `superset --version` と `superset status` が通る（Superset 未認証ならここで報告）
+2. `superset --version` と `superset status` が通る（未認証なら手順 0 に戻って認証する）
 3. `~/.codex/skills/codex-review/scripts/codex-review --help` が usage を表示する
 
 ## 3. Report
