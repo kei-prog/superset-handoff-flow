@@ -41,7 +41,25 @@ cd superset-handoff-flow
 
 `install.sh` は冪等で、前提 command の確認 → `~/.codex/skills/` への個別 symlink → 導入検証まで行います。既存 skill は上書きしません。
 
-AI agent にセットアップさせる場合は [SETUP.md](SETUP.md) をそのまま渡してください。導入確認は Codex セッションで `$kei-superset-implementation-handoff` を呼び出せることです。
+導入確認は Codex セッションで `$kei-superset-implementation-handoff` を呼び出せることです。
+
+### Codex にセットアップさせる
+
+Codex セッションに次をそのまま貼れば、Superset の導入から skill の global 配置・検証まで自動で完了します。
+
+```text
+https://github.com/kei-prog/superset-handoff-flow をセットアップしてください。
+
+1. この repo を local に clone する（既に clone 済みならそれを使い、git pull で最新化する）。
+2. repo 内の SETUP.md を読み、その手順に従う。要点:
+   - ./install.sh を実行し、skills/* を ~/.codex/skills/ に symlink として global 配置する。
+   - install.sh が superset を MISSING と報告したら、公式 https://superset.sh の手順でインストール・認証し、superset status が通ることを確認してから install.sh を再実行する。
+   - 既存の同名 skill（実体ディレクトリ）があった場合は上書きせず、SKIPPED として報告する。
+3. 検証: install.sh が exit 0、全 skill が ok、codex-review helper が動くこと。
+4. 報告: install.sh の結果、MISSING/SKIPPED/FAILED の有無、superset status の結果を表で報告する。
+
+インストールが必要なのは superset のみ。それ以外のツールの新規インストールや、~/.codex 配下の他ファイルの変更はしないでください。
+```
 
 ## Placeholders
 
