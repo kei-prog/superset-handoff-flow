@@ -12,9 +12,10 @@ flowchart TD
     B --> C["子 Codex agent: 実装・検証"]
     C --> D["codex-review<br/>(closeout review が clean になるまで)"]
     D --> E["local commit / clean worktree"]
-    E --> F{merge 対象}
-    F -->|Superset worktree が複数| G["kei-superset-worktree-merge<br/>候補を番号提示 → 選択分を順次 merge<br/>(個別 merge の安全規約は 5 を継承)"]
-    F -->|単一 worktree| H["kei-worktree-local-main-merge<br/>local main へ安全に合流・検証"]
+    E --> F{成果の出し先}
+    F -->|Superset worktree が複数 → local main| G["kei-superset-worktree-merge<br/>候補を番号提示 → 選択分を順次 merge<br/>(個別 merge の安全規約は 5 を継承)"]
+    F -->|単一 worktree → local main| H["kei-worktree-local-main-merge<br/>local main へ安全に合流・検証"]
+    F -->|PR として出す| I["branch を push して PR 作成<br/>(例: gh pr create — 本セットの対象外)"]
 ```
 
 ## Skills
