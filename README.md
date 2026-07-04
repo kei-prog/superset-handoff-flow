@@ -41,7 +41,7 @@ cd superset-handoff-flow
 
 `install.sh` は冪等で、前提 command の確認 → `~/.codex/skills/` への個別 symlink → 導入検証まで行います。既存 skill は上書きしません。
 
-導入確認は Codex セッションで `$kei-superset-implementation-handoff` を呼び出せることです。
+導入確認は Codex セッションで `$kei-superset-implementation-handoff` を呼び出せることです。Codex では skill が `$skill名` の形で候補表示・発動されることがあります。
 
 ### Codex にセットアップさせる
 
@@ -55,10 +55,11 @@ https://github.com/kei-prog/superset-handoff-flow をセットアップしてく
    - ./install.sh を実行し、skills/* を ~/.codex/skills/ に symlink として global 配置する。
    - ./install.sh は superset CLI を自動インストールしない。MISSING の検出と skill 配置・検証だけを行う。
    - install.sh が superset を MISSING と報告したら、公式 https://superset.sh の手順でインストール・認証し、superset status が通ることを確認してから install.sh を再実行する。
+   - Superset は Experience v2 mode を有効にしておく。この設定が確認できない場合は、ユーザーに Superset app で Experience v2 mode を有効化してもらい、完了後に再確認する。
    - 既存の同名 skill（実体ディレクトリ）があった場合は上書きせず、SKIPPED として報告する。
 3. ユーザー操作が必要な場合は、その場で止まり、ユーザーが実行すべき操作を具体的に指示する。例: OS 権限確認、ブラウザでのログイン、認証コード入力、手元でしか完了できないインストーラ操作。
 4. 検証: install.sh が exit 0、全 skill が ok、codex-review helper が動くこと。
-5. 報告: install.sh の結果、MISSING/SKIPPED/FAILED の有無、superset status の結果を表で報告する。
+5. 報告: install.sh の結果、MISSING/SKIPPED/FAILED の有無、superset status、Experience v2 mode の確認結果を表で報告する。
 
 インストールが必要なのは superset のみ。それ以外のツールの新規インストールや、~/.codex 配下の他ファイルの変更はしないでください。
 ```
@@ -81,15 +82,17 @@ https://github.com/kei-prog/superset-handoff-flow をセットアップし、試
    - install.sh が exit 0
    - $kei-superset-implementation-handoff が読める
    - superset --version と superset status が通る
+   - Superset の Experience v2 mode が有効
    - codex-review helper が動く
 5. 試用:
    - push / PR / deploy はしない。
    - 原則として disposable な local git repo を作る。作れない場合だけ、ユーザーに試用対象 repo を 1 つ選ばせる。
-   - $kei-superset-implementation-handoff を使い、README に 1 行を追加する程度の小さい repo-scoped task を Superset 経由で Codex agent に渡す。
+   - $kei-superset-implementation-handoff を使い、README に 1 行を追加する程度の小さい repo-scoped task を Superset 経由で Codex agent に渡す。Codex 上では skill が $skill名 の形で候補表示・発動されることがある。
    - Superset project / workspace / agent 設定が足りない場合は、推測で進めず、ユーザーが行う必要のある操作を具体的に指示する。
 6. 体験完了報告:
    - setup 結果
    - superset status
+   - Superset の Experience v2 mode 確認結果
    - 作成または利用した workspace / worktree
    - 子 agent に渡した task
    - 実際に変更された file

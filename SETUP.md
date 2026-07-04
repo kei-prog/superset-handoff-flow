@@ -9,7 +9,7 @@
 | command | 公式 | 補足 |
 |---|---|---|
 | `codex` | https://github.com/openai/codex | インストール後、公式手順に従い認証する |
-| `superset` | https://superset.sh | インストール後、認証し `superset status` が通ることを確認する |
+| `superset` | https://superset.sh | インストール後、認証し `superset status` が通ること、Experience v2 mode が有効であることを確認する |
 | `gh` | https://cli.github.com | `kei-create-pr` を使う場合のみ。`gh auth status` で認証確認 |
 
 インストール・認証が済んだら `./install.sh` を再実行して MISSING が消えたことを確認する。
@@ -35,8 +35,10 @@ exit code `0` で全 skill 導入済み。非 0 の場合は SKIPPED / FAILED / 
 新しい Codex セッションで次を確認する:
 
 1. `$kei-superset-implementation-handoff` を呼び、skill が読み込まれる
-2. `superset --version` と `superset status` が通る（未認証なら手順 0 に戻って認証する）
-3. `~/.codex/skills/codex-review/scripts/codex-review --help` が usage を表示する
+2. Codex では skill が `$skill名` の形で候補表示・発動されることがあるため、`$kei-superset-implementation-handoff` の形でも確認する
+3. `superset --version` と `superset status` が通る（未認証なら手順 0 に戻って認証する）
+4. Superset の Experience v2 mode が有効である（確認できない場合は、ユーザーに Superset app で有効化してもらう）
+5. `~/.codex/skills/codex-review/scripts/codex-review --help` が usage を表示する
 
 ## 3. Trial run
 
@@ -45,7 +47,7 @@ exit code `0` で全 skill 導入済み。非 0 の場合は SKIPPED / FAILED / 
 1. push / PR / deploy をしないことを明示する。
 2. 原則として disposable な local git repo を作る。作れない場合だけ、ユーザーに試用対象 repo を 1 つ選ばせる。
 3. `$kei-superset-implementation-handoff` を使い、README に 1 行を追加する程度の小さい repo-scoped task を Superset 経由で Codex agent に渡す。
-4. Superset project / workspace / agent 設定が足りない場合は推測で進めず、ユーザーが次に行う操作を 1 つずつ具体的に指示する。
+4. Superset の Experience v2 mode、project、workspace、agent 設定が足りない場合は推測で進めず、ユーザーが次に行う操作を 1 つずつ具体的に指示する。
 5. 子 agent の workspace / worktree、渡した task、変更 file を確認して報告する。
 
 ## 4. Report
@@ -54,7 +56,7 @@ exit code `0` で全 skill 導入済み。非 0 の場合は SKIPPED / FAILED / 
 
 - install.sh の exit code と SKIPPED / FAILED の有無
 - 前提 command のうち MISSING だったもの
-- Verify 3 項目の結果
+- Verify 5 項目の結果
 - Trial run を実施した場合は workspace / worktree、渡した task、変更 file、push / PR / deploy をしていないこと
 
 ## Notes
