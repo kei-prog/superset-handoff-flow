@@ -53,10 +53,12 @@ https://github.com/kei-prog/superset-handoff-flow をセットアップしてく
 1. この repo を local に clone する（既に clone 済みならそれを使い、git pull で最新化する）。
 2. repo 内の SETUP.md を読み、その手順に従う。要点:
    - ./install.sh を実行し、skills/* を ~/.codex/skills/ に symlink として global 配置する。
+   - ./install.sh は superset CLI を自動インストールしない。MISSING の検出と skill 配置・検証だけを行う。
    - install.sh が superset を MISSING と報告したら、公式 https://superset.sh の手順でインストール・認証し、superset status が通ることを確認してから install.sh を再実行する。
    - 既存の同名 skill（実体ディレクトリ）があった場合は上書きせず、SKIPPED として報告する。
-3. 検証: install.sh が exit 0、全 skill が ok、codex-review helper が動くこと。
-4. 報告: install.sh の結果、MISSING/SKIPPED/FAILED の有無、superset status の結果を表で報告する。
+3. ユーザー操作が必要な場合は、その場で止まり、ユーザーが実行すべき操作を具体的に指示する。例: OS 権限確認、ブラウザでのログイン、認証コード入力、手元でしか完了できないインストーラ操作。
+4. 検証: install.sh が exit 0、全 skill が ok、codex-review helper が動くこと。
+5. 報告: install.sh の結果、MISSING/SKIPPED/FAILED の有無、superset status の結果を表で報告する。
 
 インストールが必要なのは superset のみ。それ以外のツールの新規インストールや、~/.codex 配下の他ファイルの変更はしないでください。
 ```
