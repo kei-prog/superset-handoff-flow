@@ -38,13 +38,24 @@ exit code `0` で全 skill 導入済み。非 0 の場合は SKIPPED / FAILED / 
 2. `superset --version` と `superset status` が通る（未認証なら手順 0 に戻って認証する）
 3. `~/.codex/skills/codex-review/scripts/codex-review --help` が usage を表示する
 
-## 3. Report
+## 3. Trial run
+
+ユーザーが「試しに利用してみるまで」と依頼した場合は、セットアップだけで止めず、次まで案内する:
+
+1. push / PR / deploy をしないことを明示する。
+2. 原則として disposable な local git repo を作る。作れない場合だけ、ユーザーに試用対象 repo を 1 つ選ばせる。
+3. `$kei-superset-implementation-handoff` を使い、README に 1 行を追加する程度の小さい repo-scoped task を Superset 経由で Codex agent に渡す。
+4. Superset project / workspace / agent 設定が足りない場合は推測で進めず、ユーザーが次に行う操作を 1 つずつ具体的に指示する。
+5. 子 agent の workspace / worktree、渡した task、変更 file を確認して報告する。
+
+## 4. Report
 
 セットアップ報告には次を含める:
 
 - install.sh の exit code と SKIPPED / FAILED の有無
 - 前提 command のうち MISSING だったもの
 - Verify 3 項目の結果
+- Trial run を実施した場合は workspace / worktree、渡した task、変更 file、push / PR / deploy をしていないこと
 
 ## Notes
 

@@ -63,6 +63,39 @@ https://github.com/kei-prog/superset-handoff-flow をセットアップしてく
 インストールが必要なのは superset のみ。それ以外のツールの新規インストールや、~/.codex 配下の他ファイルの変更はしないでください。
 ```
 
+### セットアップから試用まで体験する
+
+新しい Codex セッションに次をそのまま貼ると、セットアップ確認から disposable repo での試用まで agent が案内します。
+
+```text
+https://github.com/kei-prog/superset-handoff-flow をセットアップし、試しに一度使えるところまで案内してください。
+
+1. repo を local に clone する（既に clone 済みならそれを使い、git pull で最新化する）。
+2. SETUP.md を読み、install.sh を実行して skill を ~/.codex/skills/ に symlink 配置する。
+3. install.sh が MISSING を報告した場合:
+   - superset が MISSING の場合は、公式手順を確認し、agent が実行できる install は agent が行う。
+   - codex が MISSING の場合は、この体験に必要な実行環境が足りないため、ユーザーに Codex のセットアップを依頼して止まる。
+   - ブラウザログイン、OS 権限、認証コード入力などユーザー操作が必要な場合は、そこで止まり、ユーザーが次に行う操作を 1 つずつ具体的に指示する。
+   - 操作完了後に install.sh と superset status を再実行する。
+4. セットアップ検証:
+   - install.sh が exit 0
+   - $kei-superset-implementation-handoff が読める
+   - superset --version と superset status が通る
+   - codex-review helper が動く
+5. 試用:
+   - push / PR / deploy はしない。
+   - 原則として disposable な local git repo を作る。作れない場合だけ、ユーザーに試用対象 repo を 1 つ選ばせる。
+   - $kei-superset-implementation-handoff を使い、README に 1 行を追加する程度の小さい repo-scoped task を Superset 経由で Codex agent に渡す。
+   - Superset project / workspace / agent 設定が足りない場合は、推測で進めず、ユーザーが行う必要のある操作を具体的に指示する。
+6. 体験完了報告:
+   - setup 結果
+   - superset status
+   - 作成または利用した workspace / worktree
+   - 子 agent に渡した task
+   - 実際に変更された file
+   - push / PR / deploy をしていないこと
+```
+
 ## Placeholders
 
 skill 内の以下の placeholder は環境に合わせて読み替え（または書き換え）てください。
