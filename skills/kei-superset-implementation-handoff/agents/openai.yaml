@@ -1,4 +1,4 @@
 interface:
   display_name: "Kei Superset Implementation Handoff"
-  short_description: "Superset経由でCodex実装agentへ委譲する"
-  default_prompt: "Use $kei-superset-implementation-handoff to hand off this repo-scoped implementation to a Codex agent through Superset."
+  short_description: "完成済みbriefをSuperset実装agentへ渡す"
+  default_prompt: "Use $kei-superset-implementation-handoff to turn the ready Implementation Brief into an Agent Prompt, launch it through Superset, and verify real startup."

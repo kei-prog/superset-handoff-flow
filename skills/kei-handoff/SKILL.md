@@ -1,141 +1,120 @@
 ---
 name: kei-handoff
-description: "別の Codex agent に渡す、repo scope の concise handoff prompt を作る。handoff、delegate、別 Codex への instruction、implementation prompt 作成をユーザーが求めたときに使う。"
+description: 受け取った Implementation Brief またはユーザー提供 context を、判断内容を変えず、別の Codex agent がこの thread に依存せず実行できる自己完結した repo-scoped Agent Prompt へ変換する。ユーザーが handoff prompt、別 agent への指示、delegate prompt、implementation prompt を求めた時、または実行 skill が完成済み Brief を prompt 化する時に使う。repo 調査、実装、thread/workspace 作成、agent 起動は行わない。
 ---
 
 # Kei Handoff
 
-この thread に依存せず、別の Codex agent が実行できる prompt を作る。
+supplied Brief または明示された context を、自己完結した Agent Prompt に変換する。
 
-## 基本ルール
+## Contract
 
-target repository ごとに、自己完結した prompt を 1 つ出力する。
+- repo を調査しない。
+- supplied facts、decisions、constraints を変更、補完、再判断しない。
+- 実装、file edit、commit、thread/workspace 作成、Superset 起動を行わない。
+- repository ごとに prompt を 1 つ作る。
+- repo を読まなければ埋められない判断が不足している場合は推測せず、`$kei-prepare-implementation-brief` が必要だと返す。
+- launch mode、reasoning effort、workspace ID、terminal command は prompt に入れない。実行 skill が管理する。
 
-ユーザーが明示しない限り、local working directory、absolute folder path、`cd` instruction は含めない。target は `<org>/<repo>` のように repository で識別する。
+## Input Readiness
 
-handoff prompt は Codex agent が読みやすいように、短く直接書く。長い背景説明より、先に outcome、守る制約、完了条件、検証を置き、同じ事実を複数 section で繰り返さない。
+implementation prompt には最低限、次の supplied information が必要。
 
-handoff prompt は原則として日本語で作成する。英語の identifier、command、error string、section label、既存の定型文は、正確性や受け取り側 agent の実行しやすさに必要な場合だけそのまま使う。
+- Repository
+- Goal
+- Success criteria
+- Source of truth
+- Current state
+- Implementation decision
+- Primary files
+- Constraints
+- Out of scope
+- Verification
+- Task stop condition
 
-受け取り側 agent が repo を読めば分かる実装手順や周辺情報は過剰に書かない。必要なのは、誤実装を防ぐ fact、scope、制約、確認すべき identifier、targeted verification だけ。
+簡単な依頼では、同等の情報がユーザー context に明示されていれば Brief 形式でなくてもよい。
 
-## 複数 repository が関わる場合
+不足が表現上の問題なら整形する。実装判断が不足している場合は調査や発明をせず、不足項目を返す。
 
-handoff は repository ごとに分ける。
+## Transformation Rules
 
-各 prompt には、その repository の作業だけを含める。cross-repo context は、誤実装を避けるために必要な場合だけ各 prompt に入れる。
+- Goal、判断、制約、事実 label を維持する。
+- 同じ内容を複数 section に展開しない。
+- repo を読めば分かる一般的な実装手順を増やさない。
+- exact identifier、path、command、error string は保持する。
+- prompt は原則として日本語で書く。
+- local path や `cd` は、supplied context または実行基盤が必要とする場合だけ含める。
+- implementation prompt と read-only prompt で execution contract を分ける。
+- user または Brief の明示条件を、以下の default より優先する。
 
-## Prompt 形式
+## Implementation Agent Prompt
 
-default では次の構造を使う。
+Implementation Brief 全体を一度だけ貼り、その後に共通 execution contract を一度だけ付ける。
 
 ```text
-Repository:
-<owner>/<repo>
+あなたは implementation agent です。別の handoff prompt は作らず、この repository で今すぐ実装してください。
 
-Goal:
-<望む outcome を 1-2 行で説明>
+Implementation Brief:
+<supplied Implementation Brief を判断内容を変えずに貼る>
 
-Success criteria:
-- <完了時に真であるべき状態>
+Execution contract:
+- Implementation Brief をこの task の source of truth として扱い、Goal、Success criteria、Constraints、Out of scope を守る。
+- 作業開始時に branch、HEAD、`git status --short` を記録する。
+- `Primary files` は初期主対象であり denylist ではない。理解のために必要な repo file は読んでよい。
+- scoped task の完了に予想外の repo file 変更が必要なら、最小の一貫した変更を行い、検証、review、commit まで続行する。最後に unexpected/expanded files と理由を報告する。
+- `Protected files` と user-owned または pre-existing dirty changes を変更、削除、commit しない。
+- Brief またはユーザーが明示的に許可していない push、PR 作成、deploy、production 変更、external service write を行わない。
+- source of truth と current tests または明示的なユーザー制約が衝突する場合は停止して証拠を報告する。Brief から stale と判断できる期待値の直接追随は最小修正して続行する。
+- blocker は、明示制約との衝突、secret、未許可の外部変更、破壊的操作、資格情報不足、検証不能、または Brief と current code から決められない product decision に限る。
 
-Strict constraints:
-- <絶対に守る制約>
-- <ついで変更を防ぐ禁止事項>
+Verification and closeout:
+- Brief に指定された focused verification を実行する。
+- 実装と verification 後、この実装差分に対して `$codex-review` を final closeout review として使う。
+- accepted/actionable finding が scoped implementation の直接追随なら、最小修正し、必要な verification と review を finding がなくなるまで繰り返す。
+- Brief またはユーザーが commit 禁止を明示しない限り、verification と review 後にこの task の意図した変更だけを含む local commit を作る。
+- 開始時が clean なら終了時も clean にする。開始時に dirty changes があった場合は baseline を維持し、この task 由来の未commit差分を残さない。pre-existing dirty state だけを理由に block しない。
 
-Out of scope:
-- <今回やらないこと>
-
-Context:
-- <verified fact>
-- <verified fact>
-
-Root cause / current behavior:
-- <今起きていること>
-
-Expected behavior:
-- <変更後に真であるべきこと>
-
-Implementation guidance:
-- <分かっている場合は確認すべき file、function、pattern>
-
-Tests / verification:
-- <実行すべき targeted checks>
+Report:
+- branch、base、changed files
+- unexpected/expanded files と理由
+- commit SHA/message、または commit を skip した理由
+- verification results
+- final review result
+- final `git status --short` と開始時 baseline との差
+- blocked items
+- 最終報告の末尾に `実装ブリーフのGoal:` を置き、Brief の Goal をそのまま再掲する。
 
 Stop condition:
-- <どこまで完了したら止めるか>
-
-報告:
-- <実装 agent が含めるべき evidence>
+Implementation Brief の Task stop condition を満たし、focused verification、final review、必要な local commit、worktree 確認を完了したら停止する。blocker がある場合は変更を広げず、証拠と必要な判断を報告して停止する。
 ```
 
-狭い実装では原則この順序を使い、不要な section は省略してよい。`Context` は 3-7 bullets 程度に圧縮する。長い経緯、会話の流れ、判断に使わない周辺情報は入れない。
+## Read-only Agent Prompt
 
-`Root cause / current behavior` と `Expected behavior` は、原因説明や挙動差分が必要な場合だけ使う。単純な整理、レビュー、機械的移動では省略してよい。
-
-受け取り側 agent の判断基準が特別に重要な場合だけ、`Role:` を 1 文で追加してよい。通常は `Goal`、`Success criteria`、`Strict constraints` で足りる。
-
-調査・レビューなど read-only handoff では、`Success criteria` と `Strict constraints` に「no edits / no commits / no external writes」を先に置く。
-
-実装を完了させる handoff では、ユーザーが明示的に否定しない限り `Stop condition` は「targeted verification 後に local commit を作成して止める」にする。実装案、調査、レビュー、方針整理の handoff では commit 作成を default にしない。push、PR 作成、deploy、production 変更、external service write は stop の外側であり、別途明示されない限り依頼しない。
-
-local commit を作る handoff では、`報告` に commit hash、branch、base、変更 file、実行した verification を含めるよう指示する。review を依頼する場合は、対象が uncommitted changes、commit、branch diff、PR diff のどれかを明記させる。local commit 後の clean working tree だけを、差分 review 済みとして報告させない。
-
-## Evidence Discipline
-
-verified fact と inference を分ける。
-
-利用できる場合は、具体的な identifier を使う。
-
-- repository name
-- PR number
-- commit hash
-- issue ID
-- endpoint
-- error string
-- repo 内 file path
-- function または type name
-
-不確かな fact を言い過ぎない。`Assumption:` または `Not verified:` と label する。
-
-## 範囲管理
-
-最小の有用な fix を書く。
-
-ユーザーが `調査だけ`、`診断のみ`、`commit しない`、`read-only` のように明示した場合は、commit 作成を依頼しない。
-
-`Owned files` や `Implementation guidance` に列挙した file は初期想定の主対象であり、絶対的な編集禁止リストではない。targeted verification や `codex-review` が、同じ仕様変更に対する直接の追随不足を示した場合は、関連する test、snapshot、type expectation、docs、表示 metadata、保存設定 migration などを最小限で owned files 外でも修正してよい。
-
-ブロックするのは、別機能の product 判断、広い refactor、API / DB / external state 変更、secret や production への影響、または仕様判断が必要な場合だけにする。明らかな stale expectation follow-up は ownership violation と扱わず、修正して再検証する前提で handoff に含める。
-
-## Narrow Implementation Handoff
-
-小さな構造整理、段階的 PR、挙動変更なしの refactor、既存導線の最小修正を handoff するときは、背景説明より先に `Goal`、`Success criteria`、`Strict constraints`、`Out of scope` を明示する。
-
-特に「分割ついでの改善」を避けるため、必要に応じて次を入れる。
-
-- Do not change function behavior.
-- Do not change function bodies except for movement/import adjustment.
-- Do not change exported API names.
-- Do not change fallback behavior.
-- Do not replace call sites outside the stated scope.
-- Do not create new packages or abstractions.
-- Do not rename any functions, including unexported helpers.
-
-## スタイル
-
-user-facing answer は短く保つ。
-
-1 repo の狭い実装なら、prompt は原則として 1 画面で読める長さを目指す。
-
-prompt を返すときは、次を優先する。
+調査、診断、review 用 prompt では implementation contract を付けない。
 
 ```text
-結論: repo ごとに分けた handoff prompt です。
+あなたは read-only agent です。次の依頼をこの thread に依存せず実行してください。
 
-```text
-...
-```
+Repository:
+<owner/repo>
+
+Task context:
+<supplied context>
+
+Constraints:
+- file edit、commit、push、PR review 投稿、external service write を行わない。
+- Confirmed、Inference、Assumption、Unconfirmed を混ぜない。
+- 対象 diff または対象状態を明記し、観測できる証拠を優先する。
+
+Report:
+- conclusion
+- evidence
+- uncertainty または blocker
+- smallest next action
 ```
 
-repository が 1 つだけの場合は、prompt も 1 つだけ返す。
+## Output
+
+1 repo なら prompt を 1 つだけ返す。複数 repo なら repository ごとに分ける。
+
+prompt 以外の説明は、どの Brief または context を何用の prompt へ変換したかを示す日本語 1 文だけにする。

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kei Prepare Implementation Brief"
+  short_description: "Repoをread-only調査し実装ブリーフを作る"
+  default_prompt: "Use $kei-prepare-implementation-brief to investigate this repo-scoped request and produce a decision-complete Implementation Brief."
