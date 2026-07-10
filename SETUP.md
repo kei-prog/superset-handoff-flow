@@ -34,8 +34,8 @@ exit code `0` で全 skill 導入済み。非 0 の場合は SKIPPED / FAILED / 
 
 新しい Codex セッションで次を確認する:
 
-1. `$kei-prepare-implementation-brief` を呼び、skill が読み込まれる
-2. `$kei-superset-implementation-handoff` を呼び、skill が読み込まれる
+1. `$kei-superset-implementation-handoff` を呼び、skill が読み込まれる
+2. 内部依存の `$kei-handoff` が読み込める
 3. Codex では skill が `$skill名` の形で候補表示・発動されることがあるため、上記の `$skill名` 形式でも確認する
 4. `superset --version` と `superset status` が通る（未認証なら手順 0 に戻って認証する）
 5. Superset の Experience v2 mode が有効である（確認できない場合は、ユーザーに Superset app で有効化してもらう）
@@ -47,8 +47,8 @@ exit code `0` で全 skill 導入済み。非 0 の場合は SKIPPED / FAILED / 
 
 1. push / PR / deploy をしないことを明示する。
 2. 原則として disposable な local git repo を作る。作れない場合だけ、ユーザーに試用対象 repo を 1 つ選ばせる。
-3. `$kei-prepare-implementation-brief` を使い、README に 1 行を追加する程度の小さい repo-scoped task の Implementation Brief を作る。
-4. `$kei-superset-implementation-handoff` を使い、その Brief を Superset 経由で Codex agent に渡す。Agent Prompt 変換は内部で `$kei-handoff` が行う。
+3. README に 1 行を追加する程度の小さい repo-scoped task について、問題、期待結果、成功条件、制約、Out of scope を会話で明確にし、Blocking unknown が 0 件であることを確認する。
+4. `$kei-superset-implementation-handoff` を使って Superset 経由で Codex agent に渡す。Ready 判定と Agent Prompt 変換は内部で `$kei-handoff` が行い、子 agent が repo を調査して実装する。
 5. Superset の Experience v2 mode、project、workspace、agent 設定が足りない場合は推測で進めず、ユーザーが次に行う操作を 1 つずつ具体的に指示する。
 6. 子 agent の workspace / worktree、渡した task、変更 file を確認して報告する。
 

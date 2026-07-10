@@ -22,22 +22,27 @@ command -v gh >/dev/null 2>&1 && echo "ok: gh" || echo "note: gh not found (need
 
 echo
 echo "== pruning renamed skills"
-legacy_name="kei-implementation-preflight"
-legacy_target="$DEST/$legacy_name"
-expected_target="$HERE/skills/$legacy_name"
-if [ -L "$legacy_target" ]; then
-  current_target="$(readlink "$legacy_target")"
-  if [ "$current_target" = "$expected_target" ]; then
-    unlink "$legacy_target"
-    echo "removed renamed skill link: $legacy_name"
-  else
-    echo "SKIPPED (legacy symlink points elsewhere): $legacy_target -> $current_target" >&2
+removed_skills=(
+  kei-implementation-preflight
+  kei-prepare-implementation-brief
+)
+for removed_name in "${removed_skills[@]}"; do
+  removed_target="$DEST/$removed_name"
+  expected_target="$HERE/skills/$removed_name"
+  if [ -L "$removed_target" ]; then
+    current_target="$(readlink "$removed_target")"
+    if [ "$current_target" = "$expected_target" ]; then
+      unlink "$removed_target"
+      echo "removed obsolete skill link: $removed_name"
+    else
+      echo "SKIPPED (obsolete symlink points elsewhere): $removed_target -> $current_target" >&2
+      status=1
+    fi
+  elif [ -e "$removed_target" ]; then
+    echo "SKIPPED (obsolete skill is not a symlink): $removed_target" >&2
     status=1
   fi
-elif [ -e "$legacy_target" ]; then
-  echo "SKIPPED (legacy skill is not a symlink): $legacy_target" >&2
-  status=1
-fi
+done
 
 echo
 echo "== linking skills"
