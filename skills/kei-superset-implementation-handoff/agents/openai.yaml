@@ -1,4 +1,4 @@
 interface:
   display_name: "Kei Superset Implementation Handoff"
-  short_description: "明確になった要件をSuperset実装agentへ渡す"
-  default_prompt: "Use $kei-superset-implementation-handoff to validate the current task context with $kei-handoff, launch it through Superset, and verify real startup."
+  short_description: "PromptとModelを確認後にSupersetへ委譲"
+  default_prompt: "Use $kei-superset-implementation-handoff to preview the complete Agent Prompt, model, and reasoning, obtain my explicit approval, then launch it through Superset and verify real startup."
