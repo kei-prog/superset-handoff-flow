@@ -41,27 +41,27 @@ exit code `0` で全 skill 導入済み。非 0 の場合は SKIPPED / FAILED / 
 5. Superset の Experience v2 mode が有効である（確認できない場合は、ユーザーに Superset app で有効化してもらう）
 6. `~/.codex/skills/codex-review/scripts/codex-review --help` が usage を表示する
 
-## 3. Trial run
+## 3. 試用
 
 ユーザーが「試しに利用してみるまで」と依頼した場合は、セットアップだけで止めず、次まで案内する:
 
 1. push / PR / deploy をしないことを明示する。
 2. 原則として disposable な local git repo を作る。作れない場合だけ、ユーザーに試用対象 repo を 1 つ選ばせる。
-3. README に 1 行を追加する程度の小さい repo-scoped task について、問題、期待結果、成功条件、制約、Out of scope を会話で明確にし、Blocking unknown が 0 件であることを確認する。
-4. `$kei-superset-implementation-handoff` を使う。Ready 判定と Agent Prompt 変換は内部で `$kei-handoff` が行う。
-5. 表示された Agent Prompt 全文、model、reasoning、launch mode を確認し、問題なければ OK と明示する。OK 前は workspace、agent、terminal が作成されないことを確認する。
-6. 既定 model が実際に起動する Codex CLI の `codex debug models` にない場合は黙って変更せず、CLI update または利用可能な代替 model をユーザーに選ばせる。
-7. Superset の Experience v2 mode、project、workspace、agent 設定が足りない場合は推測で進めず、ユーザーが次に行う操作を 1 つずつ具体的に指示する。
-8. OK 後、子 agent の workspace / worktree、使用 model / reasoning、渡した task、変更 file を確認して報告する。
+3. READMEに1行を追加する程度の小さいリポジトリ単位のタスクについて、問題、期待結果、成功条件、制約、対象外を会話で明確にし、実装を止める未確定事項が0件であることを確認する。
+4. `$kei-superset-implementation-handoff`を使う。引継ぎ準備の判定と実装指示への変換は内部で`$kei-handoff`が行う。
+5. 表示された実装指示全文、モデル、推論レベル、起動方式を確認し、問題なければOKと明示する。OK前はworkspace（作業領域）、agent（エージェント）、terminal（ターミナル）が作成されないことを確認する。
+6. 既定モデルが実際に起動するCodex CLIの`codex debug models`にない場合は黙って変更せず、CLI更新または利用可能な代替モデルをユーザーに選ばせる。
+7. SupersetのExperience v2 mode、project、workspace、agent設定が足りない場合は推測で進めず、ユーザーが次に行う操作を1つずつ具体的に指示する。
+8. OK後、子エージェントのworkspace / worktree、使用モデル / 推論レベル、渡したタスク、変更ファイルを確認して報告する。
 
-## 4. Report
+## 4. 報告
 
 セットアップ報告には次を含める:
 
 - install.sh の exit code と SKIPPED / FAILED の有無
 - 前提 command のうち MISSING だったもの
 - Verify 6 項目の結果
-- Trial run を実施した場合は workspace / worktree、承認した model / reasoning、渡した task、変更 file、push / PR / deploy をしていないこと
+- 試用を実施した場合はworkspace / worktree、承認したモデル / 推論レベル、渡したタスク、変更ファイル、push / PR / deployをしていないこと
 
 ## Notes
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Kei Superset Implementation Handoff"
-  short_description: "PromptとModelを確認後にSupersetへ委譲"
-  default_prompt: "Use $kei-superset-implementation-handoff to preview the complete Agent Prompt, model, and reasoning, obtain my explicit approval, then launch it through Superset and verify real startup."
+  short_description: "実装指示とモデルを確認してSupersetへ安全に委譲"
+  default_prompt: "$kei-superset-implementation-handoff を使い、子エージェントへ渡す実装指示全文、モデル、推論レベルを分かりやすい日本語で事前提示し、私の明示承認後にSupersetで起動して実行開始まで確認してください。"
